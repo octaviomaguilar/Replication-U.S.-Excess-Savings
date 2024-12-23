@@ -14,6 +14,13 @@ To use this program please change the home global above to match your computer.
 
 This code will create figures 1-4 in the FEDS note: https://www.federalreserve.gov/econres/notes/feds-notes/excess-savings-during-the-covid-19-pandemic-20221021.html
 The sample period used in the FEDS note is 2015-2022q2 but the data avilable ranges from 1947Q1 to 2024q3. 
+
+PARAMETERS:
+1.) The baseline period for the program is 2015q1 - 2022q2. 
+2.) The baseline period for the linear trend is 2015q1 - 2019q1.
+
+The baseline parameters will yield results that match figures 1-4 in Aditya Aladangady, David Cho, Laura Feiveson, and Eugenio Pinto (2022)
+After matching their results, you can then modify the parameters to your period of interest.  
 */
 
 *******
@@ -21,23 +28,23 @@ The sample period used in the FEDS note is 2015-2022q2 but the data avilable ran
 *******
 use "$bea/bea_qtr.dta", clear
 
-*1.1: set time restriction:
-gen temp = yq
-order yq year temp
+*1.1: Set parameters that identify the start and end of sample:
+local begin = yq(2015,1)
+local end = yq(2022,2)
 
-*220 = 2015q1
-*249 = 2022q2
-*258 = 2024q3
+*1.1.1: Set parameters that identify the start and end of the linear trend:
+local begin_trend = yq(2015,1)
+local end_trend = yq(2019,1)
 
-keep if temp >= 220 & temp <= 249
-*keep if temp >= 220 & temp <= 258
+*1.2: set time restriction:
+keep if yq >= `begin' & yq <= `end'
 
 *get the trend for all variables of interest: 
 foreach x in Compensation_of_employees Proprietors_income Rent_Int_Div Rental_income Interest_income Dividend_income Personal_transfer_receipts Unemp_insurance Other_transfer_receipts Social_insurance Personal_taxes DPI PCE interest_payments Transfer_payments Personal_saving Goods Services Saving_percentage_DPI Personal_Outlays {
 	
 	gen log_`x' = log(`x')   // Create the log value
 
-	reg log_`x' yq if temp >= 220 & temp < 239     // Regress log variable on time variable fitting 2015-2019. 
+	reg log_`x' yq if yq >= `begin_trend' & yq < `end_trend'     // Regress log variable on time variable: fitting specified time. 
 	predict log_trend, xb                        // Predict the fitted values
 	gen trend_`x' = exp(log_trend)            // Transform back to level form
 	drop log_trend
