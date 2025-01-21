@@ -85,7 +85,7 @@ twoway ///
     ytitle("Billions of Dollars, Annual Rate") ///
     xtitle("Year-Quarter") ///
     title("Flow of Savings")
-graph export "$figures/figure5a.eps", replace
+*graph export "$figures/figure5a.eps", replace
 
 *3.1: Figure 5b from FEDS note: Stock of Savings
 twoway ///
@@ -93,5 +93,5 @@ twoway ///
     ytitle("Billions of Dollars") ///
     xtitle("Year-Quarter") ///
     title("Stock of Savings")
-graph export "$figures/figure5b.eps", replace
+*graph export "$figures/figure5b.eps", replace
 
